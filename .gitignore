@@ -1,0 +1,8 @@
+# git directory
+.git/
+
+# compiled python files
+*.pyc
+
+# intellij/pycharm files
+.idea/
