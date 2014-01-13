@@ -1,13 +1,26 @@
+"""
+This module implements linear regression.
+"""
+
+
 class LinearRegression(object):
 
     @classmethod
     def fit_2d(cls, input_):
         """ Regresses a set of 2d tuples.
 
-        Example input: [(1,2), (2,1)]
+        >>> LinearRegression.fit_2d([(0, 1), (1, 0)])
+        [(0, 1), (1, 0)]
+        >>> LinearRegression.fit_2d([(0, 1), (0, 2), (2, 1), (2, 2)])
+        [(0, 1.5), (1, 1.5)]
+
         See: http://en.wikipedia.org/wiki/Simple_linear_regression#Fitting_the_regression_line
 
-        :returns: An array containing two tuples, one at x = 0, the other at x = 1.
+        :param list input_: an array containing tuples of (x, y) coordinate
+         pairs
+        :returns: An array containing two tuples, one at x = 0, the other at
+         x = 1.
+        :rtype: list(tuple, tuple)
         """
         b = cls._beta(input_)
         a = cls._alpha(input_, b)
@@ -18,7 +31,14 @@ class LinearRegression(object):
 
     @classmethod
     def _beta(cls, input_):
-        """ Finds the beta (slope) of the input. """
+        """
+        Finds the beta (slope) of the input.
+
+        :param list input_: an array containing tuples of (x, y) coordinate
+         pairs
+        :returns: the slope of the input
+        :rtype: float
+        """
         numerator = cls._xybar(input_) - (cls._xbar(input_) * cls._ybar(input_))
         xbar = cls._xbar(input_)
         denominator = cls._xsquarebar(input_) - (xbar * xbar)
@@ -30,7 +50,15 @@ class LinearRegression(object):
 
     @classmethod
     def _alpha(cls, input_, beta_):
-        """ Finds the alpha (intercept) of the input and beta values. """
+        """
+        Finds the alpha (intercept) of the input and beta values.
+
+        :param list input_: an array containing tuples of (x, y) coordinate
+         pairs
+        :param float beta_: the beta (slope) of the input
+        :returns: the intercept of the input
+        :rtype: float
+        """
         return cls._ybar(input_) - (beta_ * cls._xbar(input_))
 
     @classmethod

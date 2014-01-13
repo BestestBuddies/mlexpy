@@ -6,3 +6,6 @@
 
 # intellij/pycharm files
 .idea/
+
+# intellij files
+*.iml
