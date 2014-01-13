@@ -1,3 +1,0 @@
-\t$(SPHINXBUILD) -b html $(ALL-SPHINXOPTS) $(BUILD-DIR)
-\t@echo
-\t@echo \"Build fin-ished. The HTML pages are in $(BUILD-DIR)\"

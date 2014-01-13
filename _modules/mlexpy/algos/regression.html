@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mlexpy.algos.regression &mdash; mlexpy  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="mlexpy  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">mlexpy  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for mlexpy.algos.regression</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements linear regression.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="LinearRegression"><a class="viewcode-back" href="../../../mlexpy.algos.html#mlexpy.algos.regression.LinearRegression">[docs]</a><span class="k">class</span> <span class="nc">LinearRegression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="LinearRegression.fit_2d"><a class="viewcode-back" href="../../../mlexpy.algos.html#mlexpy.algos.regression.LinearRegression.fit_2d">[docs]</a>    <span class="k">def</span> <span class="nf">fit_2d</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Regresses a set of 2d tuples.</span>
+
+<span class="sd">        &gt;&gt;&gt; LinearRegression.fit_2d([(0, 1), (1, 0)])</span>
+<span class="sd">        [(0, 1), (1, 0)]</span>
+<span class="sd">        &gt;&gt;&gt; LinearRegression.fit_2d([(0, 1), (0, 2), (2, 1), (2, 2)])</span>
+<span class="sd">        [(0, 1.5), (1, 1.5)]</span>
+
+<span class="sd">        See: http://en.wikipedia.org/wiki/Simple_linear_regression#Fitting_the_regression_line</span>
+
+<span class="sd">        :param list input_: an array containing tuples of (x, y) coordinate</span>
+<span class="sd">         pairs</span>
+<span class="sd">        :returns: An array containing two tuples, one at x = 0, the other at</span>
+<span class="sd">         x = 1.</span>
+<span class="sd">        :rtype: list(tuple, tuple)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_beta</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_alpha</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">y_0</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">y_1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">y_0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">y_1</span><span class="p">)]</span>
+</div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_beta</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the beta (slope) of the input.</span>
+
+<span class="sd">        :param list input_: an array containing tuples of (x, y) coordinate</span>
+<span class="sd">         pairs</span>
+<span class="sd">        :returns: the slope of the input</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_xybar</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_xbar</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="o">*</span> <span class="n">cls</span><span class="o">.</span><span class="n">_ybar</span><span class="p">(</span><span class="n">input_</span><span class="p">))</span>
+        <span class="n">xbar</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_xbar</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_xsquarebar</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">xbar</span> <span class="o">*</span> <span class="n">xbar</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">denominator</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_alpha</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">beta_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the alpha (intercept) of the input and beta values.</span>
+
+<span class="sd">        :param list input_: an array containing tuples of (x, y) coordinate</span>
+<span class="sd">         pairs</span>
+<span class="sd">        :param float beta_: the beta (slope) of the input</span>
+<span class="sd">        :returns: the intercept of the input</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_ybar</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">beta_</span> <span class="o">*</span> <span class="n">cls</span><span class="o">.</span><span class="n">_xbar</span><span class="p">(</span><span class="n">input_</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_xbar</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">input_</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_ybar</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">input_</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_xybar</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">input_</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_xsquarebar</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">input_</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">mlexpy  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.
+    </div>
+  </body>
+</html>
