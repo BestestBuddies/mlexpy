@@ -12,6 +12,7 @@ There's probably a better process, but for now...
 - ``cd docs``
 - ``rm -r *``
 - ``sphinx-apidoc -F -o . ../mlexpy``
+- ``make html``
 - Copy the ``/docs/_build/html`` directories contents elsewhere.
 - ``cd ..`` (if under ``/docs`` directory)
 - ``git checkout gh-pages``
