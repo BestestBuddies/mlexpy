@@ -19,3 +19,8 @@ class TestLinearRegression(unittest.TestCase):
         expected = [(0, 1.5), (1, 1.5)]
         actual = LinearRegression.fit_2d(input_)
         self.assertEqual(expected, actual)
+
+    def test_ml_class_file(self):
+        filename1 = '../ex3x.dat'
+        filename2 = '../ex3y.dat'
+        LinearRegression.load_data(filename1, filename2)
