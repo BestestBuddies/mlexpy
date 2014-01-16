@@ -1,9 +1,86 @@
 """
 This module implements linear regression.
 """
-
+import numpy as np
 
 class LinearRegression(object):
+
+    @classmethod
+    def load_data(cls, filename1, filename2):
+        """
+        Reads in two files, first being your input features, second being the known output value. Data expected and method can be found
+        at http://openclassroom.stanford.edu/MainFolder/DocumentPage.php?course=MachineLearning&doc=exercises/ex3/ex3.html
+
+        :returns weights of theta vector corresponding to fit function
+        """
+        f1 = open(filename1)
+        f2 = open(filename2)
+        X = []
+        Y = []
+        for line in f1:
+            X.append([float(entry) for entry in line.split()])
+        for entry in X:
+            entry.insert(0, 1)
+        X = np.matrix(X)
+        for line in f2:
+            Y.append([float(line)])
+        Y = np.matrix(Y)
+        cls.fit(X, Y)
+
+    @classmethod
+    def fit(cls, X, Y):
+        """ Regresses data in a numpy array format matrix([1,2,3], [4,5,6], [7,8,9], [9,10,11])
+
+        :returns an n dim list of the weights of the associated weight vector
+        """
+        cls.num_features = X.shape[1]
+        cls.num_samples = X.shape[0]
+        theta = []
+        for i in range(cls.num_features):
+            theta.append(0)
+        theta = np.array(theta)
+        cls.learn_rate = 0.01
+        for i in range(0, 50):
+            print cls.calculate_cost(theta, X, Y)
+            print theta
+            theta = cls.update_values(theta, X, Y)
+
+    @classmethod
+    def calculate_cost(cls, theta, X, Y):
+        """
+        Calculates cost function of linear regression
+        """
+
+        hyp = cls.calc_hyp(theta, X)
+        return (1.0 / (2 * cls.num_samples)) * sum( [ (hyp[i] - Y[i])**2 for i in range(cls.num_samples) ] )
+
+    @classmethod
+    def update_values(cls, theta, X, Y):
+        """
+        Updates the theta vector for current iteration based on gradient descent
+
+        :returns a copy of the new theta vector
+        """
+        theta_new = theta.copy()
+        hyp = cls.calc_hyp(theta, X)
+        for j in range(cls.num_features):
+            sum_term = 0.0
+            for i in range(cls.num_samples):
+                sum_term += float((hyp[i] - Y[i]) * X[i, j])
+            sum_term *= (cls.learn_rate / cls.num_samples)
+            theta_new[j] = float(theta[j] - sum_term)
+        return theta_new
+
+    @classmethod
+    def calc_hyp(cls, theta, X):
+        """
+        Calculates hypothesis function
+        """
+
+        hyp = []
+        for row in X:
+            hyp.append([float(theta * row.transpose())])
+        return np.array(hyp)
 
     @classmethod
     def fit_2d(cls, input_):
@@ -89,3 +166,7 @@ class LinearRegression(object):
             s += tup[0] * tup[0]
         return float(s)/len(input_)
 
+if __name__ == '__main__':
+    filename1 = '../../ex3x.dat'
+    filename2 = '../../ex3y.dat'
+    LinearRegression.load_data(filename1, filename2)
