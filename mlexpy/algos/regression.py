@@ -2,30 +2,35 @@
 This module implements linear regression.
 """
 import numpy as np
+from numpy import float32
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 class LinearRegression(object):
-
     @classmethod
-    def load_data(cls, filename1, filename2):
+    def load_data(cls, filename):
         """
         Reads in two files, first being your input features, second being the known output value. Data expected and method can be found
         at http://openclassroom.stanford.edu/MainFolder/DocumentPage.php?course=MachineLearning&doc=exercises/ex3/ex3.html
 
         :returns weights of theta vector corresponding to fit function
         """
-        f1 = open(filename1)
-        f2 = open(filename2)
         X = []
-        Y = []
-        for line in f1:
-            X.append([float(entry) for entry in line.split()])
-        for entry in X:
-            entry.insert(0, 1)
-        X = np.matrix(X)
-        for line in f2:
-            Y.append([float(line)])
-        Y = np.matrix(Y)
-        cls.fit(X, Y)
+        y = []
+        for line in open(filename):
+            rows = [int(x) for x in line.split(',')]
+            X.append(rows[0:2])
+            y.append(rows[-1])
+        X = np.array(X, float32)
+        y = np.array(y, int)
+
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        #min_max_scalar = MinMaxScaler()
+        #X_scaled = min_max_scalar.fit_transform(X)
+
+        X = np.concatenate((np.ones((X.shape[0], 1)), X_scaled), axis=1)
+        cls.fit(np.array(X, float32), np.array(y, int))
 
     @classmethod
     def fit(cls, X, Y):
@@ -33,14 +38,11 @@ class LinearRegression(object):
 
         :returns an n dim list of the weights of the associated weight vector
         """
-        cls.num_features = X.shape[1]
-        cls.num_samples = X.shape[0]
-        theta = []
-        for i in range(cls.num_features):
-            theta.append(0)
-        theta = np.array(theta)
-        cls.learn_rate = 0.01
-        for i in range(0, 50):
+        cls.num_samples, cls.num_features = X.shape
+        theta = np.zeros(cls.num_features)
+
+        cls.learn_rate = 1
+        for i in range(0, 100):
             print cls.calculate_cost(theta, X, Y)
             print theta
             theta = cls.update_values(theta, X, Y)
@@ -51,8 +53,9 @@ class LinearRegression(object):
         Calculates cost function of linear regression
         """
 
-        hyp = cls.calc_hyp(theta, X)
-        return (1.0 / (2 * cls.num_samples)) * sum( [ (hyp[i] - Y[i])**2 for i in range(cls.num_samples) ] )
+        error = cls.calc_hyp(theta, X) - Y
+        sq_error = np.dot(error.transpose(), error) / (2 * cls.num_samples)
+        return float(sq_error)
 
     @classmethod
     def update_values(cls, theta, X, Y):
@@ -61,15 +64,10 @@ class LinearRegression(object):
 
         :returns a copy of the new theta vector
         """
-        theta_new = theta.copy()
-        hyp = cls.calc_hyp(theta, X)
-        for j in range(cls.num_features):
-            sum_term = 0.0
-            for i in range(cls.num_samples):
-                sum_term += float((hyp[i] - Y[i]) * X[i, j])
-            sum_term *= (cls.learn_rate / cls.num_samples)
-            theta_new[j] = float(theta[j] - sum_term)
-        return theta_new
+        error = cls.calc_hyp(theta, X) - Y
+        gradient = np.dot(X.transpose(), error) / cls.num_samples
+        theta = theta - (cls.learn_rate  * gradient)
+        return theta
 
     @classmethod
     def calc_hyp(cls, theta, X):
@@ -77,10 +75,7 @@ class LinearRegression(object):
         Calculates hypothesis function
         """
 
-        hyp = []
-        for row in X:
-            hyp.append([float(theta * row.transpose())])
-        return np.array(hyp)
+        return np.dot(X, theta)
 
     @classmethod
     def fit_2d(cls, input_):
@@ -167,6 +162,5 @@ class LinearRegression(object):
         return float(s)/len(input_)
 
 if __name__ == '__main__':
-    filename1 = '../../ex3x.dat'
-    filename2 = '../../ex3y.dat'
-    LinearRegression.load_data(filename1, filename2)
+    filename = '../../ex1data2.txt'
+    LinearRegression.load_data(filename)
