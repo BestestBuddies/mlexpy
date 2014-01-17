@@ -1,6 +1,7 @@
 """
 This module implements linear regression.
 """
+>>>>>>> b9ce16b88383617c9e91384865ff383f4e969709
 import numpy as np
 from numpy import float32
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
