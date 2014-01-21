@@ -1,0 +1,17 @@
+mlexpy package
+==============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    mlexpy.algos
+
+Module contents
+---------------
+
+.. automodule:: mlexpy
+    :members:
+    :undoc-members:
+    :show-inheritance:

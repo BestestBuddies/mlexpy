@@ -1,0 +1,30 @@
+mlexpy.algos package
+====================
+
+Submodules
+----------
+
+mlexpy.algos.naive_bayes module
+-------------------------------
+
+.. automodule:: mlexpy.algos.naive_bayes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mlexpy.algos.regression module
+------------------------------
+
+.. automodule:: mlexpy.algos.regression
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mlexpy.algos
+    :members:
+    :undoc-members:
+    :show-inheritance:
