@@ -53,4 +53,4 @@ nb = NaiveBayes('tennis.csv')
 nb.fit()
 dict_input = {'Sky': 'Sunny', 'Temp': 'Hot', 'Humid': 'High', 'Wind': 'Weak'}
 input_ = pd.Series(dict_input)
-print nb.predict(input_, probability=True)
+#print nb.predict(input_, probability=True)

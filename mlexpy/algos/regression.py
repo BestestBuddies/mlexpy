@@ -1,7 +1,6 @@
 """
 This module implements linear regression.
 """
->>>>>>> b9ce16b88383617c9e91384865ff383f4e969709
 import numpy as np
 from numpy import float32
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -44,8 +43,8 @@ class LinearRegression(object):
 
         cls.learn_rate = 1
         for i in range(0, 100):
-            print cls.calculate_cost(theta, X, Y)
-            print theta
+            #print cls.calculate_cost(theta, X, Y)
+            #print theta
             theta = cls.update_values(theta, X, Y)
 
     @classmethod
@@ -162,6 +161,6 @@ class LinearRegression(object):
             s += tup[0] * tup[0]
         return float(s)/len(input_)
 
-if __name__ == '__main__':
-    filename = '../../ex1data2.txt'
-    LinearRegression.load_data(filename)
+#if __name__ == '__main__':
+#    filename = 'ex1data2.txt'
+#    LinearRegression.load_data(filename)

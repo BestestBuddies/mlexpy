@@ -21,6 +21,5 @@ class TestLinearRegression(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_ml_class_file(self):
-        filename1 = '../ex3x.dat'
-        filename2 = '../ex3y.dat'
-        LinearRegression.load_data(filename1, filename2)
+        filename = 'ex1data2.txt'
+        LinearRegression.load_data(filename)
