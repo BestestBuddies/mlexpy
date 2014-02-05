@@ -40,33 +40,40 @@ class NeuralNet():
     def train_model(self):
         self.initialize_weights(.5)
         errors = {'train': [], 'valid': [], 'test': [], }
+        class_errors = {'train': [], 'valid': [], 'test': [], }
         for i in range(500):
             self.back_prop()
             for dataset in errors.keys():
-                errors[dataset].append(
-                    self.calculate_network_error(self.data[dataset]['outputs'], self.data[dataset]['inputs'])[0]
-                )
-        self.plot_errors(errors)
+                error, class_error = self.calculate_network_error(self.data[dataset]['outputs'], self.data[dataset]['inputs'])
+                errors[dataset].append(error)
+                class_errors[dataset].append(class_error)
+        self.plot_errors(errors, class_errors)
 
-    def plot_errors(self, errors):
+    def plot_errors(self, errors, class_errors):
         plt.plot(errors['train'])
+        plt.plot(class_errors['train'])
         plt.plot(errors['valid'])
+        plt.plot(class_errors['valid'])
         plt.plot(errors['test'])
+        plt.plot(class_errors['test'])
         plt.show()
 
     def calculate_network_error(self, known_outputs, inputs):
         net, predictions = self.feed_forward(inputs)
-        #prediction_classes = self.matrix_to_output(predictions)
-        #known_classes = self.matrix_to_output(known_outputs)
+        prediction_classes = self.matrix_to_class(predictions)
+        known_classes = self.matrix_to_class(known_outputs)
 
+        known_classes_list = known_classes.tolist()
         known_outputs_list = known_outputs.tolist()
+        predictions_list = predictions.tolist()
+        prediction_classes_list = prediction_classes.tolist()
+
         predictions = predictions.tolist()
-        error = sum([(target - output)**2 for target, output in zip(known_outputs, predictions)])
+        error = sum([(target[0] - output[0])**2 for target, output in zip(known_outputs_list, predictions_list)])
         error *= (1.0 / (len(inputs) * self.num_features))
 
-        #class_error = len([1 for i, j in zip(known_classes, prediction_classes) if i != j])
-        #class_error *= (1.0 / known_outputs.shape[0])
-        class_error = 0
+        class_error = 1.0 * len([1 for i, j in zip(known_classes_list, prediction_classes_list) if i[0] != j[0]])
+        class_error /= known_outputs.shape[0]
         return error, class_error
 
     def feed_forward(self, inputs):
@@ -80,28 +87,30 @@ class NeuralNet():
         return self.weights
 
     @classmethod
-    def matrix_to_output(cls, matrix_):
+    def matrix_to_class(cls, matrix_):
         """
         Takes matix like
-        1 0 0
-        0 1 0
-        0 0 1
+        .5 .4 .3
+        .2 .1 .9
+        .4 .3 .7
 
-        :returns matrix of form
+        :returns matrix of form [max position + 1]
         1
-        2
+        3
         3
 
         representing class outputs
         """
         matrix_ = matrix_.tolist()
-        output_matrix = []
+        class_matrix = []
         for line in matrix_:  # should be like [0, 0, 1]
-            output_matrix.append([line.index(1)])
-        return np.matrix(output_matrix)  # column vector of class values
+            max_val = max(line)
+            class_value = line.index(max_val)
+            class_matrix.append([class_value])
+        return np.matrix(class_matrix)  # column vector of class values
 
     @classmethod
-    def output_to_matrix(cls, output):
+    def class_to_matrix(cls, output):
         """
         Takes matix like
         1
